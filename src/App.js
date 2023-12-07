@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { io } from "socket.io-client";
 
-function App() {
+const socket = io("ws://localhost:50000");
+
+const App = () => {
+  const [serverMessage, setServerMessage] = useState(null);
+
+  socket.on("from-server", (msg) => {
+    setServerMessage(msg);
+  });
+
+  const sendToServer = () => {
+    socket.emit("to-server", "hello");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <p>
+        Server: <span>{serverMessage}</span>
+      </p>
+      <button onClick={sendToServer}>Send</button>
     </div>
   );
-}
+};
 
 export default App;
